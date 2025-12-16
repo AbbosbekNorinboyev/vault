@@ -1,0 +1,43 @@
+server:
+  port: 2213
+
+spring:
+  application:
+    name: vault
+
+  cloud:
+    vault:
+      uri: http://127.0.0.1:8200
+      authentication: token
+      token: ${VAULT_TOKEN}  # sizning Vault Root Token
+      enabled: true
+      kv:
+        enabled: true
+        backend: secret
+        default-context: db
+
+  config:
+    import: vault://
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/project?currentSchema=vault
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql=true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
